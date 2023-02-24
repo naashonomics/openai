@@ -1,0 +1,87 @@
+ // MENU
+function onOpen() {
+ DocumentApp.getUi().createMenu("OPENAI GPT")
+ .addItem("Generate Ideas", "generateIdeas")
+ .addItem("Generate Paragraph", "generateParagraph")
+  .addToUi();
+}
+// ****END MENU****
+
+
+
+
+// Your API 
+var apiKey = "Enter Your API Key";
+var model = "text-davinci-003"
+// ****END****
+
+
+
+
+// PROMPT
+function generateIdeas() {
+var doc = DocumentApp.getActiveDocument()
+var selectedText = doc.getSelection().getRangeElements()[0].getElement().asText().getText()
+var body = doc.getBody()
+var prompt = "Genrate 5 blog ideas around the word" + selectedText;
+temperature= 0
+maxTokens = 2060
+  const requestBody = {
+    "model": model,
+    "prompt": prompt,
+    "temperature": temperature,
+    "max_tokens": maxTokens,
+  };
+  const requestOptions = {
+    "method": "POST",
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer "+apiKey
+    },
+    "payload": JSON.stringify(requestBody)
+  }
+const response = UrlFetchApp.fetch("https://api.openai.com/v1/completions", requestOptions);
+var responseText = response.getContentText();
+var json = JSON.parse(responseText);
+Logger.log(json['choices'][0]['text'])
+para = body.appendParagraph(json['choices'][0]['text'])
+}
+// ****END PROMPT****
+
+
+// PROMPT
+function generateParagraph() {
+var doc = DocumentApp.getActiveDocument()
+var selectedText = doc.getSelection().getRangeElements()[0].getElement().asText().getText()
+var body = doc.getBody()
+var prompt = "Write a 100 word paragraph on" + selectedText;
+temperature= 0
+maxTokens = 2060
+  const requestBody = {
+    "model": model,
+    "prompt": prompt,
+    "temperature": temperature,
+    "max_tokens": maxTokens,
+  };
+  const requestOptions = {
+    "method": "POST",
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer "+apiKey
+    },
+    "payload": JSON.stringify(requestBody)
+  }
+const response = UrlFetchApp.fetch("https://api.openai.com/v1/completions", requestOptions);
+var responseText = response.getContentText();
+var json = JSON.parse(responseText);
+Logger.log(json['choices'][0]['text'])
+para = body.appendParagraph(json['choices'][0]['text'])
+}
+// ****END PROMPT****
+
+
+
+
+
+
+
